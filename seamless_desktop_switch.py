@@ -54,6 +54,7 @@ def start_seamless_desktop_switching():
     et = 0
     loop_interval = .05
     switching = False
+    movement_threshold = 100
     while not quit_application :
         # print(caps_is_pressed, caps_is_pressed_prev)
         # print(et)
@@ -67,13 +68,15 @@ def start_seamless_desktop_switching():
         if et > long_press_time :
             et += loop_interval
             current_x, current_y = pyautogui.position()
-        
-            if current_x > last_x:  # Moved right
+            if current_x > last_x + movement_threshold:  # Moved right
                 pyautogui.hotkey('ctrl', 'win', 'right')
-            elif current_x < last_x:  # Moved left
+                last_x, last_y = current_x, current_y
+                
+            elif current_x < last_x - movement_threshold:  # Moved left
                 pyautogui.hotkey('ctrl', 'win', 'left')
+                last_x, last_y = current_x, current_y
             switching = True
-            last_x, last_y = current_x, current_y
+            
         else :
             if switching :
                 keyboard.press_and_release(trigger_key)
